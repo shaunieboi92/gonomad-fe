@@ -7,13 +7,16 @@ import {
   Image,
   TouchableOpacity,
   ScrollView,
+  Switch,
 } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import { SafeAreaView } from "react-native-safe-area-context";
 import PastTripsScreen from "./PastTripsScreen";
+import { useTheme } from "../contexts/ThemeContext";
 
 const ProfileScreen = () => {
   const [showPastTrips, setShowPastTrips] = React.useState(false);
+  const { isDarkMode, toggleTheme } = useTheme();
 
   if (showPastTrips) {
     return <PastTripsScreen onBack={() => setShowPastTrips(false)} />;
@@ -106,6 +109,22 @@ const ProfileScreen = () => {
             </View>
             <Text style={styles.cardLabel}>Connections</Text>
           </TouchableOpacity>
+        </View>
+
+        {/* Theme Toggle */}
+        <View style={styles.settingsCard}>
+          <View style={styles.settingRow}>
+            <View style={styles.settingLeft}>
+              <Ionicons name="moon" size={24} color="#14B8A6" />
+              <Text style={styles.settingLabel}>Dark Mode</Text>
+            </View>
+            <Switch
+              value={isDarkMode}
+              onValueChange={toggleTheme}
+              trackColor={{ false: "#D1D5DB", true: "#14B8A6" }}
+              thumbColor="#FFFFFF"
+            />
+          </View>
         </View>
 
         {/* Become a Host Section */}
@@ -210,6 +229,31 @@ const styles = StyleSheet.create({
     borderRadius: 6,
   },
   newBadgeText: { fontSize: 10, fontWeight: "bold", color: "#1E40AF" },
+  settingsCard: {
+    backgroundColor: "#FFF",
+    padding: 20,
+    borderRadius: 24,
+    marginBottom: 16,
+    elevation: 4,
+    shadowColor: "#000",
+    shadowOpacity: 0.1,
+    shadowRadius: 8,
+  },
+  settingRow: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
+  },
+  settingLeft: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 12,
+  },
+  settingLabel: {
+    fontSize: 16,
+    fontWeight: "600",
+    color: "#111827",
+  },
   hostCard: {
     flexDirection: "row",
     alignItems: "center",
