@@ -6,6 +6,7 @@ import HomeTabs from "./HomeTabs";
 import TripDetailScreen from "../../screens/trips/TripDetailScreen";
 import HomeScreen from "../../screens/HomeScreen";
 import AddToTripScreen from "../../screens/trips/AddToTripScreen";
+import AddFlightScreen from "../../screens/trips/add/AddFlightScreen";
 
 export type RootStackParamList = {
   HomeTabs: undefined;
@@ -15,6 +16,7 @@ export type RootStackParamList = {
     endDate: string;
   };
   AddToTrip: undefined;
+  AddFlight: undefined;
 };
 
 const Stack = createNativeStackNavigator<RootStackParamList>();
@@ -29,6 +31,8 @@ const AppNavigator = () => {
         component={AddToTripScreen}
         options={{ headerShown: false }}
       />
+      <Stack.Screen name="AddFlight" component={AddFlightScreen} options={{ headerShown: false }}/>
+
     </Stack.Navigator>
   );
 }

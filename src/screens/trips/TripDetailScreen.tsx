@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import {
   View,
   Text,
@@ -22,8 +22,8 @@ const TIMELINE = [
         icon: "airplane",
         title: "SIN → IST",
         subtitle: "TK 55 · Turkish Airlines",
-        note: "Arrival: Mon 22 Dec, 06:05 GMT+3",
-      },
+        arrivalTime: "Mon 22 Dec, 06:05 GMT+3",
+        note: undefined,},
     ],
   },
   {
@@ -35,6 +35,8 @@ const TIMELINE = [
         title: "Hertz",
         subtitle: "Pick up: 12:00 CET",
         note: "Prague International Airport (PRG)",
+                arrivalTime: undefined,
+
       },
       {
         time: undefined,
@@ -42,6 +44,8 @@ const TIMELINE = [
         title: "Hertz",
         subtitle: "Drop off: 12:00 CET",
         note: "Prague International Airport (PRG)",
+                arrivalTime: undefined,
+
       },
       {
         time: undefined,
@@ -49,6 +53,7 @@ const TIMELINE = [
         title: "Airbnb",
         subtitle: "Check in: 15:00 CET",
         note: undefined,
+        arrivalTime: undefined,
 
       },
     ],
@@ -62,15 +67,28 @@ const TIMELINE = [
         title: "Prague Castle",
         subtitle: "Historic landmark",
         note: undefined,
+                arrivalTime: undefined,
+
       },
     ],
   },
 ];
 
 export default function TripDetailScreen() {
-   const { colors } = useTheme();
+  const { colors } = useTheme();
   const tripStyles = createTripStyles(colors);
   const navigation = useNavigation<any>();
+  const [timeline, setTimeline] = useState(TIMELINE);
+
+  const addFlightToTimeline = (flight: any) => {
+    // Add to first day for simplicity
+    setTimeline(prev => {
+      const newTimeline = [...prev];
+      newTimeline[0].items.push(flight);
+      return newTimeline;
+    });
+  };
+
 
   return (
     <SafeAreaView style={tripStyles.container}>
@@ -112,7 +130,9 @@ export default function TripDetailScreen() {
             <View key={idx}>
               <Text style={tripStyles.dayLabel}>{section.day}</Text>
 
-              {section.items.map((item, index) => (
+              {section.items.map((item, index) => {
+                const isLastItem = index === section.items.length - 1;
+                return (
                 <View key={index} style={tripStyles.timelineItem}>
                   {/* Line */}
                   <View style={tripStyles.lineContainer}>
@@ -123,7 +143,7 @@ export default function TripDetailScreen() {
                         color="#FFFFFF"
                       />
                     </View>
-                    <View style={tripStyles.verticalLine} />
+                    {!isLastItem && <View style={tripStyles.verticalLine} />}
                   </View>
 
                   {/* Content */}
@@ -135,12 +155,16 @@ export default function TripDetailScreen() {
                     {item.subtitle && (
                       <Text style={tripStyles.subtitle}>{item.subtitle}</Text>
                     )}
+                     {item.arrivalTime && (
+                      <Text style={tripStyles.note}>Arrival: {item.arrivalTime}</Text>
+                    )}
                     {item.note && (
                       <Text style={tripStyles.note}>{item.note}</Text>
                     )}
                   </View>
                 </View>
-              ))}
+              );
+              })}
             </View>
           ))}
         </View>
@@ -149,7 +173,41 @@ export default function TripDetailScreen() {
      {/* Floating Action Button */}
       <TouchableOpacity
         style={tripStyles.fab}
-        onPress={() => navigation.navigate("AddToTrip")}
+        onPress={() => navigation.navigate("AddToTrip", {
+          onSaveFlight: (newFlight: any) => {
+            setTimeline(prev => {
+              const updated = [...prev];
+              
+              // Format the flight's date to match day labels
+              const flightDate = new Date(newFlight.date);
+              const days = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
+              const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+              const flightDayLabel = `${days[flightDate.getDay()]} ${flightDate.getDate()} ${months[flightDate.getMonth()]}`;
+              
+              // Find matching day or create new one
+              const dayIndex = updated.findIndex(section => section.day === flightDayLabel);
+              
+              if (dayIndex >= 0) {
+                // Add to existing day
+                updated[dayIndex].items.push(newFlight);
+              } else {
+                // Create new day section
+                updated.push({
+                  day: flightDayLabel,
+                  items: [newFlight]
+                });
+                // Sort by date
+                updated.sort((a, b) => {
+                  const dateA = new Date((a.items[0] as any).date || 0);
+                  const dateB = new Date((b.items[0] as any).date || 0);
+                  return dateA.getTime() - dateB.getTime();
+                });
+              }
+              
+              return updated;
+            });
+          },
+        })}
       >
         <Ionicons name="add" size={28} color="#0F172A" />
       </TouchableOpacity>

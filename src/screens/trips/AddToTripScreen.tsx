@@ -26,10 +26,11 @@ const OPTIONS = {
   ],
 };
 
-export default function AddToTripScreen() {
+export default function AddToTripScreen({ route }: { route: any }) {
   const { colors } = useTheme();
   const tripStyles = createTripStyles(colors);
   const navigation = useNavigation<any>();
+  const { onSaveFlight } = route.params || {};
 
   return (
     <SafeAreaView style={tripStyles.container}>
@@ -50,9 +51,11 @@ export default function AddToTripScreen() {
           <TouchableOpacity
             key={idx}
             style={tripStyles.row}
-            onPress={() =>
-              item.route && navigation.navigate(item.route)
-            }
+            onPress={() => {
+              if (item.route) {
+                navigation.navigate(item.route, { onSaveFlight });
+              }
+            }}
           >
             <View style={tripStyles.iconCircle}>
               <Ionicons

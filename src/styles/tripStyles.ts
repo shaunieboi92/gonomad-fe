@@ -67,7 +67,8 @@ export default function createTripStyles(colors: any) {
       backgroundColor: colors.accent,
         width: 2,
         flex: 1,
-        marginTop: 0
+        marginTop: 0,
+        marginBottom: -20
     },
 
     itemTitle: {

@@ -17,12 +17,11 @@ const Tab = createBottomTabNavigator<HomeTabParamList>();
 
 export default function HomeTabs() {
   return (
-     <Tab.Navigator>
+     <Tab.Navigator screenOptions={{ headerShown: false }}>
        <Tab.Screen 
         name="Explore" 
         component={HomeScreen}
         options={{
-          headerShown: false,
           tabBarIcon: ({ color, size }) => (
             <Ionicons name="search" size={size} color={color} />
           ),
@@ -32,7 +31,6 @@ export default function HomeTabs() {
         name="Wishlists" 
         component={HomeScreen}
         options={{
-          headerShown: false,
           tabBarIcon: ({ color, size }) => (
             <Ionicons name="heart-outline" size={size} color={color} />
           ),
@@ -42,7 +40,6 @@ export default function HomeTabs() {
         name="Trips" 
         component={TripDetailScreen}
         options={{
-          headerShown: false,
           tabBarIcon: ({ color, size }) => (
             <Ionicons name="map-outline" size={size} color={color} />
           ),
@@ -52,7 +49,6 @@ export default function HomeTabs() {
         name="Profile" 
         component={ProfileScreen}
         options={{
-          headerShown: false,
           tabBarIcon: ({ color, size }) => (
             <Ionicons name="person-outline" size={size} color={color} />
           ),
